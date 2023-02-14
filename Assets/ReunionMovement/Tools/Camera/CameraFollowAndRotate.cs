@@ -8,11 +8,10 @@ namespace GameLogic
     /// <summary>
     /// 摄像机围绕物体旋转
     /// </summary>
-    public class CameraRotatesAroundObject : MonoBehaviour
+    public class CameraFollowAndRotate : MonoBehaviour
     {
         //目标对象
         public Transform targetPos;
-        public GameObject root;
         //移动摄像机
         protected const string MOUSEX = "Mouse X";
         protected const string MOUSEY = "Mouse Y";
@@ -49,7 +48,6 @@ namespace GameLogic
         public void SetIsEnableTrue()
         {
             isEnable = true;
-            root.SetActive(false);
         }
 
         public void Update()
@@ -59,7 +57,6 @@ namespace GameLogic
                 if (Input.GetMouseButton(1))
                 {
                     float valueX = Input.GetAxis("Mouse X") * 10;
-                    root.transform.Rotate(Vector3.down, valueX);
                 }
             }
             else
