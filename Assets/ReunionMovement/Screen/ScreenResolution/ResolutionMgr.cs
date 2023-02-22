@@ -7,6 +7,9 @@ using GameLogic.Base;
 
 namespace GameLogic
 {
+    /// <summary>
+    /// 分辨率管理
+    /// </summary>
     public class ResolutionMgr : SingleToneMgr<ResolutionMgr>
     {
         public enum AspectRatio

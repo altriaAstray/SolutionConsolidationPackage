@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace GameLogic
 {
+    /// <summary>
+    /// 宽高比工具
+    /// </summary>
     public class AspectUtility : MonoBehaviour
     {
         static Camera backgroundCam;
