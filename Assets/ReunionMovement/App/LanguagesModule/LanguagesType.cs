@@ -4,8 +4,11 @@ using UnityEngine;
 
 namespace GameLogic
 {
-    public static class AppConfig
+    public enum Multilingual
     {
-        public static string DatabasePath = "AutoDatabase/";
+        //中文
+        ZH = 0,
+        //英文
+        EN,
     }
 }

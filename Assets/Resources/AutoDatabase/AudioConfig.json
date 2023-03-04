@@ -1,0 +1,108 @@
+
+[
+    {
+        "Id" : 100001,
+        "Path" : "Audio/BGMs/",
+        "Name" : "No More Magic",
+        "Type" : 1,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 100002,
+        "Path" : "Audio/BGMs/",
+        "Name" : "Peaceful Place",
+        "Type" : 1,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 100003,
+        "Path" : "Audio/BGMs/",
+        "Name" : "Sadness",
+        "Type" : 1,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 100004,
+        "Path" : "Audio/BGMs/",
+        "Name" : "Song18",
+        "Type" : 1,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 100005,
+        "Path" : "Audio/BGMs/",
+        "Name" : "Space",
+        "Type" : 1,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 100006,
+        "Path" : "Audio/BGMs/",
+        "Name" : "The_Fall_of_Arcana_(New_Era_Version)",
+        "Type" : 1,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 100007,
+        "Path" : "Audio/BGMs/",
+        "Name" : "The_field_of_dreams",
+        "Type" : 1,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 100008,
+        "Path" : "Audio/BGMs/",
+        "Name" : "World Map",
+        "Type" : 1,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 110009,
+        "Path" : "Audio/BattleBGMs/",
+        "Name" : "Boss_battle_#2_metal_opening",
+        "Type" : 2,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 110010,
+        "Path" : "Audio/BattleBGMs/",
+        "Name" : "Fight_looped",
+        "Type" : 2,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 110011,
+        "Path" : "Audio/BattleBGMs/",
+        "Name" : "Orbital_Colossus",
+        "Type" : 2,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 120012,
+        "Path" : "Audio/SoundEffects/",
+        "Name" : "Accept",
+        "Type" : 3,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 120013,
+        "Path" : "Audio/SoundEffects/",
+        "Name" : "Click",
+        "Type" : 3,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 120014,
+        "Path" : "Audio/SoundEffects/",
+        "Name" : "Click2",
+        "Type" : 3,
+        "Detailed" : ""
+    },
+    {
+        "Id" : 120015,
+        "Path" : "Audio/SoundEffects/",
+        "Name" : "Pop",
+        "Type" : 3,
+        "Detailed" : ""
+    }
+]

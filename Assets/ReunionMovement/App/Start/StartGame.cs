@@ -12,14 +12,12 @@ namespace GameLogic
         {
             var modules = base.CreateModules();
 
+            modules.Add(ResourcesModule.Instance);
+            modules.Add(DatabaseModule.Instance);
             modules.Add(EventModule.Instance);
-            //modules.Add(ResourcesModule.Instance);
-            //modules.Add(DataBaseModule.Instance);
-            //modules.Add(EventModule.Instance);
-            //modules.Add(LanguagesModule.Instance);
-            //modules.Add(AudioModule.Instance);
-            //modules.Add(MapModule.Instance);
-            //modules.Add(UIModule.Instance);
+            modules.Add(LanguagesModule.Instance);
+            modules.Add(AudioModule.Instance);
+            modules.Add(UIModule.Instance);
             return modules;
         }
 
@@ -58,6 +56,8 @@ namespace GameLogic
 
         public IEnumerator StartGameShow()
         {
+            UIModule.Instance.OpenWindow("StartGameUIPlane");
+
             yield return new WaitForSeconds(0f);
         }
 

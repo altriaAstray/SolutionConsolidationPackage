@@ -19,9 +19,9 @@ namespace GameLogic.Editor
         /// </summary>
         private static ExcelTools instance;
 
-        static readonly string toDir = "./Config/ExcelTools";                               // 源文件路径
-        static readonly string scriptOutPutPath = "Assets/Scripts/DataBase/AutoScript/";    // 脚本输出路径
-        static readonly string dataOutPutPath = "Assets/Resources/AutoDataBase/";           // 数据表输出路径
+        static readonly string toDir = "./Config/ExcelTools";                                // 源文件路径
+        static readonly string scriptOutPutPath = "Assets/ResourcesPackage/AutoScripts/";    // 脚本输出路径
+        static readonly string dataOutPutPath = "Assets/Resources/AutoDatabase/";            // 数据表输出路径
 
         static int tableRows_Max = 3;                                           // 最大行数
         static int tableRows_1 = 0;                                             // 第一行中文名称
@@ -76,7 +76,7 @@ namespace GameLogic.Editor
                 if (table.Rows.Count < tableRows_Max)
                 {
                     EditorUtility.ClearProgressBar();
-                    string msg = string.Format("无法分析“{0}”。Excel文件应至少包含三行（第一行：英文名称，第二行：中文名称，第三行：数据类型）!", path);
+                    string msg = string.Format("无法分析“{0}”。Excel文件应至少包含三行（第一行：中文名称，第二行：英文名称，第三行：数据类型）!", path);
                     EditorUtility.DisplayDialog("ExcelTools", msg, "OK");
                     return false;
                 }
