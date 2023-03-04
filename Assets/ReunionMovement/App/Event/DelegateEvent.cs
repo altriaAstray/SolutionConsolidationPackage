@@ -33,7 +33,7 @@ namespace GameLogic.Events
         /// 删除监听函数
         /// </summary>
         /// <param name="removeHandle"></param>
-        public void removeListener(EventHandler removeHandle)
+        public void RemoveListener(EventHandler removeHandle)
         {
             if (eventHandle != null)
                 eventHandle -= removeHandle;
@@ -43,7 +43,7 @@ namespace GameLogic.Events
         /// 添加监听函数
         /// </summary>
         /// <param name="addHandle"></param>
-        public void addListener(EventHandler addHandle)
+        public void AddListener(EventHandler addHandle)
         {
             eventHandle += addHandle;
         }

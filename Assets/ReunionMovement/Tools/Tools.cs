@@ -215,6 +215,17 @@ namespace GameLogic
         }
 
         /// <summary>
+        /// 设置屏幕分辨率
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="fullScreen"></param>
+        public static void SetScreen(int width, int height, bool fullScreen)
+        {
+            Screen.SetResolution(/*屏幕宽度*/ width,/*屏幕高度*/ height, /*是否全屏显示*/fullScreen);
+        }
+
+        /// <summary>
         /// 搜索子物体组件-Transform版
         /// </summary>
         /// <typeparam name="T"></typeparam>
