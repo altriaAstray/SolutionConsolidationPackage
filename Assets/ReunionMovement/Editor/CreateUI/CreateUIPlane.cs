@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 namespace GameLogic.Editor
 {
-    class CreateNewUI : EditorWindow
+    class CreateUIPlane : EditorWindow
     {
         static string scriptOutPutPath = "Assets/ResourcesPackage/Scripts/App/UI/UIPlane/";// 脚本输出路径
         static string prefabsOutPutPath = "Assets/Resources/Prefabs/UIs/";// 场景导出UI路径
@@ -33,7 +33,7 @@ namespace GameLogic.Editor
         public static void ShowWindow()
         {
             //弹出编辑器
-            GetWindow(typeof(CreateNewUI), true, "创建新UI&脚本", true);
+            GetWindow(typeof(CreateUIPlane), true, "创建新UI&脚本", true);
         }
 
         void OnGUI()
@@ -55,18 +55,13 @@ namespace GameLogic.Editor
                 //按下按钮后执行的方法
                 CreateSpript();
             }
-            //GUILayout.BeginHorizontal();
-            //if (GUILayout.Button("第三步 绑定脚本（到根节点）"))
-            //{
-            //    //按下按钮后执行的方法
-            //    BindingSpriptRoot();
-            //}
+
+            if (GUILayout.Button("第三步 绑定脚本"))
+            {
+                //按下按钮后执行的方法
+                BindingSpriptRoot();
+            }
             //GUILayout.Space(20);
-            //if (GUILayout.Button("第三步 绑定脚本（到根的子节点）"))
-            //{
-            //    //按下按钮后执行的方法
-            //    BindingSpriptRootChild();
-            //}
             //GUILayout.EndHorizontal();
 
             //GUILayout.BeginHorizontal();
@@ -101,7 +96,7 @@ namespace GameLogic.Editor
 
             uiObj = new GameObject(scriptName);
             uiObj.layer = (int)UnityLayerDef.UI;
-            uiObj.AddComponent<UIWindowAsset>();
+            uiObj.AddComponent<UIWindowAsset>().stringArgument = scriptName;
             var uiPanel = new GameObject("SafeArea").AddComponent<Image>();
             uiPanel.transform.parent = uiObj.transform;
             //设置UI为全屏
@@ -189,39 +184,18 @@ namespace GameLogic.Editor
         public void BindingSpriptRoot()
         {
             scriptName = className + "UIPlane";
-            var type = System.Type.GetType(scriptName + ", Assembly-CSharp");
+            var type = System.Type.GetType("GameLogic.UI." + scriptName + ", Assembly-CSharp");
 
             SetUIObj();
 
             if (!uiObj.TryGetComponent(type, out Component component))
             {
                 uiObj.AddComponent(type);
-                uiObj.AddComponent<UIWindowAsset>();
-
-                uiObj.GetComponent<UIWindowAsset>().stringArgument = scriptName + "Root";
+                uiObj.GetComponent<UIController>().UIName = scriptName;
                 AssetDatabase.Refresh();
             }
         }
-        /// <summary>
-        /// 绑定脚本到根的子节点
-        /// </summary>
-        public void BindingSpriptRootChild()
-        {
-            scriptName = className + "UIPlane";
-            var type = System.Type.GetType(scriptName + ", Assembly-CSharp");
 
-            SetUIObj();
-
-            GameObject @object = uiObj.transform.Find(className + "UIPlane").gameObject;
-
-            if (!@object.TryGetComponent(type, out Component component))
-            {
-                @object.AddComponent(type);
-                @object.AddComponent<UIWindowAsset>();
-                @object.GetComponent<UIWindowAsset>().stringArgument = scriptName;
-                AssetDatabase.Refresh();
-            }
-        }
         /// <summary>
         /// 绑定脚本到目标
         /// </summary>
@@ -251,7 +225,7 @@ namespace GameLogic.Editor
             string objName = "";
             if (uiObj == null)
             {
-                objName = className + "UIPlane" + "Root";
+                objName = className + "UIPlane";
                 uiObj = GameObject.Find(objName);
 
                 if (uiObj == null)

@@ -12,18 +12,17 @@ namespace GameLogic
     /// </summary>
     public class ResourcesModule : CustommModuleInitialize
     {
-        //------------------------------
-        //实例
+        #region 实例与初始化
         public static ResourcesModule Instance = new ResourcesModule();
-        //------------------------------
-        private string _streamPath;
-        //缓存从Resource中加载的资源
-        private Hashtable _resourceTable; 
-        //------------------------------
         public bool IsInited { get; private set; }
         private double _initProgress = 0;
         public double InitProgress { get { return _initProgress; } }
-        //------------------------------
+        #endregion
+
+        private string _streamPath;
+        //缓存从Resource中加载的资源
+        private Hashtable _resourceTable; 
+
         public IEnumerator Init()
         {
             if (Tools.IsDebug())

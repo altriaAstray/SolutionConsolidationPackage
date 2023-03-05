@@ -74,15 +74,18 @@ namespace GameLogic
         public static Action<UIController> OnCloseEvent;
 
         public EventSystem EventSystem;
-        //----------------------------------
-        //创建根路径
+
+        #region 创建根路径
+
         public GameObject UIRoot { get; private set; }
         public Camera UICamera { get; private set; }
         public GameObject MainUIRoot { get; private set; }
         public GameObject NormalUIRoot { get; private set; }
         public GameObject HeadInfoUIRoot { get; private set; }
         public GameObject TipsUIRoot { get; private set; }
-
+        /// <summary>
+        /// 创建根节点
+        /// </summary>
         private void CreateRoot()
         {
             UIRoot = new GameObject("UIRoot");
@@ -114,6 +117,9 @@ namespace GameLogic
 
             GameObject.DontDestroyOnLoad(EventSystem);
         }
+        #endregion
+
+        #region UI操作
         /// <summary>
         /// 初始化UI
         /// </summary>
@@ -156,11 +162,17 @@ namespace GameLogic
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
             canvas.worldCamera = UICamera;
         }
-        //----------------------------------
-        //创建UI
+
+        /// <summary>
+        /// 加载UI
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="openWhenFinish"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public UILoadState LoadWindow(string name, bool openWhenFinish, params object[] args)
         {
-            GameObject uiObj = ResourcesModule.Instance.InstantiateAsset<GameObject>("Prefabs/UIs/" + name);
+            GameObject uiObj = ResourcesModule.Instance.InstantiateAsset<GameObject>(AppConfig.UIPath + name);
 
             if (uiObj != null)
             {
@@ -170,10 +182,14 @@ namespace GameLogic
                 uiObj.transform.localRotation = Quaternion.identity;
                 uiObj.transform.localScale = Vector3.one;
 
-                var uiBase = CreateUIController(uiObj, name);
+                var uiController = uiObj.GetComponent<UIController>();
 
                 UILoadState uiLoadState = new UILoadState(name);
-                uiLoadState.UIWindow = uiBase;
+                if (uiController == null)
+                {
+                    var uiBase = CreateUIController(uiObj, name);
+                    uiLoadState.UIWindow = uiBase;
+                }
                 uiLoadState.UIWindow.UIName = name;
                 uiLoadState.IsLoading = false;
                 uiLoadState.OpenWhenFinish = openWhenFinish;
@@ -188,8 +204,13 @@ namespace GameLogic
             return null;
         }
 
-        //----------------------------------
-        //初始化UI
+        /// <summary>
+        /// 初始化UI
+        /// </summary>
+        /// <param name="uiState"></param>
+        /// <param name="uiBase"></param>
+        /// <param name="open"></param>
+        /// <param name="args"></param>
         private void InitWindow(UILoadState uiState, UIController uiBase, bool open, params object[] args)
         {
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -226,23 +247,33 @@ namespace GameLogic
 
             uiState.OnUIWindowLoadedCallbacks(uiState);
         }
-        //----------------------------------
-        //更新UI
-        [Obsolete("Use string ui name instead for more flexible!")]
+        /// <summary>
+        /// 和UI通讯
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="callback"></param>
+        [Obsolete("使用字符串UI名称代替更灵活!")]
         public void CallUI<T>(Action<T> callback) where T : UIController
         {
             CallUI<T>((_ui, _args) => callback(_ui));
         }
 
-        // 使用泛型方式
-        [Obsolete("Use string ui name instead for more flexible!")]
+        /// <summary>
+        /// 和UI通讯 - 使用泛型方式
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="callback"></param>
+        /// <param name="args"></param>
+        [Obsolete("使用字符串UI名称代替更灵活!")]
         public void CallUI<T>(Action<T, object[]> callback, params object[] args) where T : UIController
         {
             string uiName = typeof(T).Name.Remove(0, 3); // 去掉 "XUI"
 
             CallUI(uiName, (_uibase, _args) => { callback(_uibase as T, _args); }, args);
         }
+
         /// <summary>
+        /// 和UI通讯
         /// 等待并获取UI实例，执行callback
         /// 源起Loadindg UI， 在加载过程中，进度条设置方法会失效
         /// 如果是DynamicWindow,，使用前务必先要Open!
@@ -260,8 +291,12 @@ namespace GameLogic
 
             uiState.DoCallback(callback, args);
         }
-        //----------------------------------
-        //打开UI
+
+        /// <summary>
+        /// 打开窗口
+        /// </summary>
+        /// <param name="uiState"></param>
+        /// <param name="args"></param>
         private void OnOpen(UILoadState uiState, params object[] args)
         {
             if (uiState.IsLoading)
@@ -298,7 +333,13 @@ namespace GameLogic
                     OnOpenEvent(uiBase);
             });
         }
-        // 打开窗口（非复制）
+
+        /// <summary>
+        /// 打开窗口（非复制）
+        /// </summary>
+        /// <param name="uiName"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public UILoadState OpenWindow(string uiName, params object[] args)
         {
             //TOD需要先创建脚本对象，再根据脚本中的值进行加载资源
@@ -317,18 +358,89 @@ namespace GameLogic
             OnOpen(uiState, args);
             return uiState;
         }
-        //----------------------------------
-        //关闭UI
+
+        /// <summary>
+        /// 设置窗口（非复制）
+        /// </summary>
+        /// <param name="uiName"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public UILoadState SetWindow(string uiName, params object[] args)
+        {
+            UILoadState uiState;
+            if (!UIWindows.TryGetValue(uiName, out uiState))
+            {
+                uiState = LoadWindow(uiName, true, args);
+                return uiState;
+            }
+
+            if (!uiState.isOnInit)
+            {
+                uiState.isOnInit = true;
+                if (uiState.UIWindow != null) uiState.UIWindow.OnInit();
+            }
+            OnSet(uiState, args);
+            return uiState;
+        }
+
+        /// <summary>
+        /// 设置窗口
+        /// </summary>
+        /// <param name="uiState"></param>
+        /// <param name="args"></param>
+        private void OnSet(UILoadState uiState, params object[] args)
+        {
+            if (uiState.IsLoading)
+            {
+                uiState.OpenWhenFinish = true;
+                uiState.OpenArgs = args;
+                return;
+            }
+
+            UIController uiBase = uiState.UIWindow;
+
+            if (uiBase.gameObject.activeSelf)
+            {
+                uiBase.BeforeOpen(args, () =>
+                {
+                    uiBase.gameObject.SetActive(true);
+                    System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+                    stopwatch.Start();
+                    uiBase.OnSet(args);
+                    stopwatch.Stop();
+                    if (Tools.IsDebug())
+                    {
+                        Debug.Log(string.Format("OnOpen UI {0}, cost {1}", uiBase.gameObject.name, stopwatch.Elapsed.TotalMilliseconds * 0.001f));
+                    }
+                    if (OnOpenEvent != null)
+                        OnOpenEvent(uiBase);
+                });
+            }
+
+        }
+
+        /// <summary>
+        /// 关闭窗口
+        /// </summary>
+        /// <param name="t"></param>
         public void CloseWindow(Type t)
         {
             CloseWindow(t.Name.Remove(0, 3)); // XUI remove
         }
 
+        /// <summary>
+        /// 关闭窗口
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         public void CloseWindow<T>()
         {
             CloseWindow(typeof(T));
         }
 
+        /// <summary>
+        /// 关闭窗口
+        /// </summary>
+        /// <param name="name"></param>
         public void CloseWindow(string name)
         {
             UILoadState uiState;
@@ -365,8 +477,7 @@ namespace GameLogic
         }
 
         /// <summary>
-        /// Destroy all windows that has LoadState.
-        /// Be careful to use.
+        /// 销毁所有具有LoadState的窗口。请小心使用。
         /// </summary>
         public void DestroyAllWindows()
         {
@@ -383,8 +494,10 @@ namespace GameLogic
             foreach (string item in LoadList)
                 DestroyWindow(item, true);
         }
-        //NOTE 在非生成代码情况下,xlua无法访问Obsolete的方法
-        //[Obsolete("Deprecated: Please don't use this")]
+
+        /// <summary>
+        /// 关闭全部窗口
+        /// </summary>
         public void CloseAllWindows()
         {
             List<string> toCloses = new List<string>();
@@ -402,59 +515,12 @@ namespace GameLogic
                 CloseWindow(toCloses[i]);
             }
         }
-        //----------------------------------
-        //更新UI
-        // 设置窗口（非复制）
-        public UILoadState SetWindow(string uiName, params object[] args)
-        {
-            UILoadState uiState;
-            if (!UIWindows.TryGetValue(uiName, out uiState))
-            {
-                uiState = LoadWindow(uiName, true, args);
-                return uiState;
-            }
 
-            if (!uiState.isOnInit)
-            {
-                uiState.isOnInit = true;
-                if (uiState.UIWindow != null) uiState.UIWindow.OnInit();
-            }
-            OnSet(uiState, args);
-            return uiState;
-        }
-
-        private void OnSet(UILoadState uiState, params object[] args)
-        {
-            if (uiState.IsLoading)
-            {
-                uiState.OpenWhenFinish = true;
-                uiState.OpenArgs = args;
-                return;
-            }
-
-            UIController uiBase = uiState.UIWindow;
-
-            if (uiBase.gameObject.activeSelf)
-            {
-                uiBase.BeforeOpen(args, () =>
-                {
-                    uiBase.gameObject.SetActive(true);
-                    System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-                    stopwatch.Start();
-                    uiBase.OnSet(args);
-                    stopwatch.Stop();
-                    if (Tools.IsDebug())
-                    {
-                        Debug.Log(string.Format("OnOpen UI {0}, cost {1}", uiBase.gameObject.name, stopwatch.Elapsed.TotalMilliseconds * 0.001f));
-                    }
-                    if (OnOpenEvent != null)
-                        OnOpenEvent(uiBase);
-                });
-            }
-
-        }
-        //----------------------------------
-        //删除UI  
+        /// <summary>
+        /// 销毁窗口
+        /// </summary>
+        /// <param name="uiName"></param>
+        /// <param name="destroyImmediate"></param>
         public void DestroyWindow(string uiName, bool destroyImmediate = false)
         {
             UILoadState uiState;
@@ -477,18 +543,27 @@ namespace GameLogic
 
             UIWindows.Remove(uiName);
         }
-        //----------------------------------
-        //        
-        //----------------------------------
-        //        
-        //----------------------------------
-        // 隐藏时打开，打开时隐藏
+        #endregion
+
+
+
+
+        #region 工具
+        /// <summary>
+        /// 切换 - 打开的隐藏，隐藏的打开
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="args"></param>
         public void ToggleWindow<T>(params object[] args)
         {
             string uiName = typeof(T).Name.Remove(0, 3); // 去掉"CUI"
             ToggleWindow(uiName, args);
         }
-
+        /// <summary>
+        /// 切换 - 打开的隐藏，隐藏的打开
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="args"></param>
         public void ToggleWindow(string name, params object[] args)
         {
             if (IsOpen(name))
@@ -500,8 +575,12 @@ namespace GameLogic
                 OpenWindow(name, args);
             }
         }
-        //----------------------------------
-        //tool
+
+        /// <summary>
+        /// 是否被加载了
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool IsLoad(string name)
         {
             if (UIWindows.ContainsKey(name))
@@ -509,11 +588,22 @@ namespace GameLogic
             return false;
         }
 
+        /// <summary>
+        /// 是否已经打开
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool IsOpen(string name)
         {
             UIController uiBase = GetUIBase(name);
             return uiBase == null ? false : uiBase.gameObject.activeSelf;
         }
+
+        /// <summary>
+        /// 获取UI控制器
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
 
         private UIController GetUIBase(string name)
         {
@@ -525,13 +615,19 @@ namespace GameLogic
             return null;
         }
 
+        /// <summary>
+        /// 给打开的UI添加脚本（脚本从程序集查找）
+        /// </summary>
+        /// <param name="uiObj"></param>
+        /// <param name="uiTemplateName"></param>
+        /// <returns></returns>
 
         public virtual UIController CreateUIController(GameObject uiObj, string uiTemplateName)
         {
             UIController uiBase = uiObj.AddComponent(System.Type.GetType("GameLogic.UI." + uiTemplateName + ", Assembly-CSharp")) as UIController;
-            //UIController uiBase = uiObj.AddComponent<UIController>();
             return uiBase;
         }
+        #endregion
     }
 
     public class UILoadState

@@ -16,17 +16,15 @@ namespace GameLogic
 
     public class AudioModule : CustommModuleInitialize
     {
-        //------------------------------
-        //实例
+        #region 实例与初始化
         public static AudioModule Instance = new AudioModule();
-        //------------------------------
         public bool IsInited { get; private set; }
         private double _initProgress = 0;
         public double InitProgress { get { return _initProgress; } }
+        #endregion
 
         string filePath = AppConfig.DatabasePath;
         string fileName = "AudioConfig.json";
-        //------------------------------
         //声音对象
         AudioSource sourceObj;
         Transform transformObj;

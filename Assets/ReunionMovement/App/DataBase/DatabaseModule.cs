@@ -11,21 +11,20 @@ namespace GameLogic
     /// </summary>
     public class DatabaseModule : CustommModuleInitialize 
     {
-        //------------------------------
-        //实例
+        #region 实例与初始化
         public static DatabaseModule Instance = new DatabaseModule();
-        //------------------------------
-        // 游戏配置表
-        Dictionary<int, GameConfig> configs = new Dictionary<int, GameConfig>();
-        //------------------------------
 
         public bool IsInited { get; private set; }
         private double _initProgress = 0;
         public double InitProgress { get { return _initProgress; } }
+        #endregion
+
+        // 游戏配置表
+        Dictionary<int, GameConfig> configs = new Dictionary<int, GameConfig>();
 
         string filePath = AppConfig.DatabasePath;
         string fileName = "GameConfig.json";
-        //------------------------------
+
         public IEnumerator Init()
         {
             if(Tools.IsDebug())

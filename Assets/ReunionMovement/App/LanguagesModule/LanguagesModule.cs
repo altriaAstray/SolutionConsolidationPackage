@@ -10,18 +10,17 @@ namespace GameLogic
     /// </summary>
     public class LanguagesModule : CustommModuleInitialize
     {
-        //------------------------------
-        //实例
+        #region 实例与初始化
         public static LanguagesModule Instance = new LanguagesModule();
-        //------------------------------
+        public bool IsInited { get; private set; }
+        private double _initProgress = 0;
+        public double InitProgress { get { return _initProgress; } }
+        #endregion
+
         LanguageSubject subject = new LanguageSubject();
         Multilingual multilingual;
         // 语言配置表
         Dictionary<int, Languages> languages = new Dictionary<int, Languages>();
-        //------------------------------
-        public bool IsInited { get; private set; }
-        private double _initProgress = 0;
-        public double InitProgress { get { return _initProgress; } }
 
         string filePath = AppConfig.DatabasePath;
         string fileName = "Languages.json";
